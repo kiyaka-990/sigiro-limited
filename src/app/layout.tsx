@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import "./globals.css";
@@ -61,6 +61,12 @@ export const metadata: Metadata = {
     apple: "/apple-icon.png",
     shortcut: "/favicon.png",
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#047c3e",
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

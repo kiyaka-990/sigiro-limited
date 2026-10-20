@@ -5,6 +5,7 @@ import Navbar from "./Navbar";
 import Footer from "./Footer";
 import Chatbot from "./Chatbot";
 import WhatsAppButton from "./WhatsAppButton";
+import PwaInstall from "./PwaInstall";
 import ScrollProgress from "./ScrollProgress";
 
 export default function ClientWrapper({ children }: { children: React.ReactNode }) {
@@ -25,6 +26,7 @@ export default function ClientWrapper({ children }: { children: React.ReactNode 
       <Footer />
       <Chatbot />
       <WhatsAppButton />
+      <PwaInstall />
     </>
   );
 }
