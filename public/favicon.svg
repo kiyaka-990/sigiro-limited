@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
+  <defs>
+    <linearGradient id="ga" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#0f5c39"/><stop offset="1" stop-color="#1f9d62"/>
+    </linearGradient>
+    <linearGradient id="gb" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#1f9d62"/><stop offset="1" stop-color="#5cc98a"/>
+    </linearGradient>
+    <linearGradient id="gd" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#b8841c"/><stop offset="1" stop-color="#e8be4f"/>
+    </linearGradient>
+  </defs>
+  <rect width="80" height="80" rx="18" fill="#0b1120"/>
+  <circle cx="40" cy="24" r="6" fill="#e8be4f" opacity="0.9"/>
+  <g transform="translate(40,64)">
+    <g><path d="M0,0 C-7,-13 -6,-28 0,-38 C6,-28 7,-13 0,0 Z" fill="url(#gd)"/></g>
+    <g transform="rotate(-26) scale(0.92)"><path d="M0,0 C-7,-13 -6,-28 0,-38 C6,-28 7,-13 0,0 Z" fill="url(#ga)"/></g>
+    <g transform="rotate(26) scale(0.92)"><path d="M0,0 C-7,-13 -6,-28 0,-38 C6,-28 7,-13 0,0 Z" fill="url(#ga)"/></g>
+    <g transform="rotate(-52) scale(0.74)"><path d="M0,0 C-7,-13 -6,-28 0,-38 C6,-28 7,-13 0,0 Z" fill="url(#gb)"/></g>
+    <g transform="rotate(52) scale(0.74)"><path d="M0,0 C-7,-13 -6,-28 0,-38 C6,-28 7,-13 0,0 Z" fill="url(#gb)"/></g>
+  </g>
+</svg>
