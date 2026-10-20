@@ -12,7 +12,7 @@ export type BotResponse = {
 
 const companyData = {
   name: "Sigiro Construction & General Supplies",
-  director: "Ramadhan Ali",
+  director: "Mohamednoor Adan",
   location: "P.O. Box: 4414 – 00200, Nairobi, Kenya",
   phone: "+254 722 311 108",
   email: "sigiroconstruction2122@gmail.com",
@@ -107,7 +107,7 @@ const knowledgeBase: Array<{
   {
     patterns: [/project manag|supervis|site manag|PMC/i],
     response: () => ({
-      message: `📊 **Project Management & Supervision**\n\nWe ensure your project is delivered **on time, on budget, to specification**:\n\n• **Project planning & scheduling** (MS Project, Primavera P6)\n• **Cost management & budgeting**\n• **Quality assurance & control**\n• **Site supervision** – full-time resident engineers\n• **Progress reporting** – weekly & monthly\n• **Contractor management**\n• **Risk management**\n• **Final commissioning & handover**\n\nDirector **Ramadhan Ali** personally oversees major projects to guarantee excellence.\n\nReady to get started?`,
+      message: `📊 **Project Management & Supervision**\n\nWe ensure your project is delivered **on time, on budget, to specification**:\n\n• **Project planning & scheduling** (MS Project, Primavera P6)\n• **Cost management & budgeting**\n• **Quality assurance & control**\n• **Site supervision** – full-time resident engineers\n• **Progress reporting** – weekly & monthly\n• **Contractor management**\n• **Risk management**\n• **Final commissioning & handover**\n\nDirector **Mohamednoor Adan** personally oversees major projects to guarantee excellence.\n\nReady to get started?`,
       quickReplies: ["Get a Quote", "Contact Director", "Our Projects", "Other Services"],
     }),
   },
@@ -133,9 +133,9 @@ const knowledgeBase: Array<{
     }),
   },
   {
-    patterns: [/director|ramadhan|ali|CEO|founder|owner|management|team/i],
+    patterns: [/director|mohamednoor|adan|CEO|founder|owner|management|team/i],
     response: () => ({
-      message: `👨‍💼 **About Our Director**\n\n**Eng. Ramadhan Ali** is the Founder and Managing Director of Sigiro Construction & General Supplies.\n\nWith over **15 years** of experience in the construction and consultancy industry across East Africa, he has:\n\n• Led **100+ major projects** in Kenya and the region\n• Delivered roads, buildings, water works & supplies\n• Built a team of **50+ professionals**\n• Maintained a **98% client satisfaction rate**\n\nHis vision: *\"Building sustainable infrastructure that transforms communities and drives Kenya's development.\"*\n\nSigiro was founded in ${companyData.founded} with a commitment to quality, integrity, and innovation.`,
+      message: `👨‍💼 **About Our Director**\n\n**Eng. Mohamednoor Adan** is the Founder and Managing Director of Sigiro Construction & General Supplies.\n\nWith over **15 years** of experience in the construction and consultancy industry across East Africa, he has:\n\n• Led **100+ major projects** in Kenya and the region\n• Delivered roads, buildings, water works & supplies\n• Built a team of **50+ professionals**\n• Maintained a **98% client satisfaction rate**\n\nHis vision: *\"Building sustainable infrastructure that transforms communities and drives Kenya's development.\"*\n\nSigiro was founded in ${companyData.founded} with a commitment to quality, integrity, and innovation.`,
       quickReplies: ["Our Services", "Our Projects", "Contact Director", "About Company"],
     }),
   },
@@ -156,7 +156,7 @@ const knowledgeBase: Array<{
   {
     patterns: [/about|company|history|background|who are you|tell me about/i],
     response: () => ({
-      message: `🌿 **About Sigiro Construction & General Supplies**\n\nFounded in **${companyData.founded}** by **Eng. Ramadhan Ali**, Sigiro is a premier construction, supplies and consultancy firm based in **Nairobi, Kenya**.\n\nWe are driven by the belief that quality infrastructure is the foundation of a prosperous society. Over the past decade, we have:\n\n✅ Completed **100+ projects** worth over KES 2 Billion\n✅ Built a team of **50+ professionals**\n✅ Served **200+ satisfied clients**\n✅ Operated across **all 47 counties** in Kenya\n\n**Our Mission:** To deliver innovative, sustainable infrastructure solutions that transform communities.\n\n**Our Vision:** To be East Africa's most trusted construction and supplies partner.`,
+      message: `🌿 **About Sigiro Construction & General Supplies**\n\nFounded in **${companyData.founded}** by **Eng. Mohamednoor Adan**, Sigiro is a premier construction, supplies and consultancy firm based in **Nairobi, Kenya**.\n\nWe are driven by the belief that quality infrastructure is the foundation of a prosperous society. Over the past decade, we have:\n\n✅ Completed **100+ projects** worth over KES 2 Billion\n✅ Built a team of **50+ professionals**\n✅ Served **200+ satisfied clients**\n✅ Operated across **all 47 counties** in Kenya\n\n**Our Mission:** To deliver innovative, sustainable infrastructure solutions that transform communities.\n\n**Our Vision:** To be East Africa's most trusted construction and supplies partner.`,
       quickReplies: ["Our Services", "Our Projects", "Contact Us", "Meet the Team"],
     }),
   },
