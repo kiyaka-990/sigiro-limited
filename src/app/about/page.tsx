@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CheckCircle, Award, Users, Target, Eye, Heart, ExternalLink, Mail } from "lucide-react";
+import { CheckCircle, Award, Users, Target, Eye, Heart, Mail } from "lucide-react";
 import AnimatedCounter from "@/components/AnimatedCounter";
 
 export const metadata: Metadata = {
   title: "About Us",
   description:
-    "Learn about Sigiro Construction & General Supplies — our history, mission, vision, and the expert team led by Director Eng. Ramadhan Ali based in Nairobi.",
+    "Learn about Sigiro Construction & General Supplies — our history, mission, vision, and the expert team led by Director Eng. Mohamednoor Adan based in Nairobi.",
 };
 
 const values = [
@@ -38,8 +38,8 @@ const values = [
 
 const team = [
   {
-    name: "Eng. Ramadhan Ali",
-    initials: "RA",
+    name: "Eng. Mohamednoor Adan",
+    initials: "MA",
     role: "Managing Director & Founder",
     specialty: "Civil & Structural Engineering",
     accent: "from-amber-500 to-amber-700",
@@ -179,10 +179,10 @@ export default function AboutPage() {
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-8">
                   <div className="w-36 h-36 rounded-full border-2 border-[var(--gold)]/40 flex items-center justify-center mb-6">
                     <div className="w-28 h-28 rounded-full bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center shadow-2xl shadow-amber-900/40">
-                      <span className="text-white text-4xl font-black tracking-tight">RA</span>
+                      <span className="text-white text-4xl font-black tracking-tight">MA</span>
                     </div>
                   </div>
-                  <p className="text-white text-xl font-black">Eng. Ramadhan Ali</p>
+                  <p className="text-white text-xl font-black">Eng. Mohamednoor Adan</p>
                   <p className="text-[var(--gold)] text-sm font-semibold mt-1">Managing Director &amp; Founder</p>
                   <div className="mt-5 flex items-center gap-2 text-slate-400 text-xs">
                     <span className="px-2.5 py-1 rounded-full bg-white/5 border border-white/10">EBK Registered</span>
@@ -198,13 +198,13 @@ export default function AboutPage() {
             <div className="space-y-5">
               <span className="text-[var(--gold)] font-bold text-sm uppercase tracking-widest">Meet the Director</span>
               <h2 className="text-3xl sm:text-4xl font-black text-gray-900 dark:text-white leading-tight">
-                Eng. Ramadhan Ali
+                Eng. Mohamednoor Adan
               </h2>
               <p className="text-[var(--gold)] font-semibold">
                 Managing Director & Founder
               </p>
               <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                With over <strong>15 years</strong> of experience in construction and engineering consultancy, Eng. Ramadhan Ali founded Sigiro Construction & General Supplies with a vision to build infrastructure that transforms Kenyan communities.
+                With over <strong>15 years</strong> of experience in construction and engineering consultancy, Eng. Mohamednoor Adan founded Sigiro Construction & General Supplies with a vision to build infrastructure that transforms Kenyan communities.
               </p>
               <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
                 A graduate of the University of Nairobi with an MSc in Civil Engineering, he is a registered member of the Engineers Board of Kenya (EBK) and has overseen projects worth over KES 2 Billion across Kenya.
@@ -226,9 +226,6 @@ export default function AboutPage() {
               <div className="flex gap-3 pt-2">
                 <a href="mailto:sigiroconstruction2122@gmail.com" className="flex items-center gap-2 px-5 py-2.5 bg-[var(--gold)] hover:bg-[var(--gold-hover)] text-white text-sm font-semibold rounded-full transition-colors">
                   <Mail className="w-4 h-4" /> Email Director
-                </a>
-                <a href="https://www.linkedin.com/in/ramadhan-ali-77b47327/" className="flex items-center gap-2 px-5 py-2.5 border border-slate-300 text-[var(--gold)] dark:border-[#16331f] text-sm font-semibold rounded-full hover:bg-[#f3f8f4] dark:hover:bg-slate-800/60 transition-colors">
-                  <ExternalLink className="w-4 h-4" /> LinkedIn
                 </a>
               </div>
             </div>

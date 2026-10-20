@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     "water works kenya",
     "general supplies kenya",
     "Sigiro Construction",
-    "Ramadhan Ali",
+    "Mohamednoor Adan",
     "Nairobi kenya",
   ],
   authors: [{ name: "Sigiro Construction & General Supplies" }],

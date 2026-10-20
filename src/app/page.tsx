@@ -117,10 +117,10 @@ export default function HomePage() {
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-8">
                   <div className="w-36 h-36 rounded-full border-2 border-[var(--gold)]/40 flex items-center justify-center mb-6">
                     <div className="w-28 h-28 rounded-full bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center shadow-2xl shadow-amber-900/40">
-                      <span className="text-white text-4xl font-black tracking-tight">RA</span>
+                      <span className="text-white text-4xl font-black tracking-tight">MA</span>
                     </div>
                   </div>
-                  <p className="text-white text-xl font-black">Eng. Ramadhan Ali</p>
+                  <p className="text-white text-xl font-black">Eng. Mohamednoor Adan</p>
                   <p className="text-[var(--gold)] text-sm font-semibold mt-1">Managing Director &amp; Founder</p>
                   <div className="mt-5 flex flex-wrap items-center justify-center gap-2 text-slate-400 text-xs">
                     <span className="px-2.5 py-1 rounded-full bg-white/5 border border-white/10">15+ yrs experience</span>
@@ -145,7 +145,7 @@ export default function HomePage() {
                 A trusted partner in Kenya&apos;s built environment
               </h2>
               <p className="mt-5 text-slate-600 dark:text-slate-300 leading-relaxed">
-                Founded by <strong className="text-slate-900 dark:text-white">Eng. Ramadhan Ali</strong>, Sigiro Construction & General Supplies has grown from a focused consultancy into one of Nairobi&apos;s most trusted construction and engineering firms — with a portfolio spanning all 47 counties.
+                Founded by <strong className="text-slate-900 dark:text-white">Eng. Mohamednoor Adan</strong>, Sigiro Construction & General Supplies has grown from a focused consultancy into one of Nairobi&apos;s most trusted construction and engineering firms — with a portfolio spanning all 47 counties.
               </p>
               <p className="mt-4 text-slate-600 dark:text-slate-300 leading-relaxed">
                 Our multidisciplinary team of engineers, architects, quantity surveyors and supply-chain specialists brings decades of combined expertise to every project.
