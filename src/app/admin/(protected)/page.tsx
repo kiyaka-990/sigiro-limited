@@ -6,15 +6,17 @@ import Link from "next/link";
 import {
   LayoutDashboard, MessageSquare, Briefcase, Users, TrendingUp,
   LogOut, Menu, X, BarChart2, Calendar, Bell, Settings, Clock,
-  Plus, Eye, Trash2, AlertCircle, DollarSign, CheckCircle,
+  Plus, Eye, Trash2, AlertCircle, DollarSign, Images,
 } from "lucide-react";
 import Logo from "@/components/Logo";
 import ThemeToggle from "@/components/ThemeToggle";
 import {
   getInquiries, updateInquiry, deleteInquiry,
-  getProjects, addProject, updateProject, deleteProject,
-  subscribe, type Inquiry, type Project, type InquiryStatus,
+  subscribe, type Inquiry, type InquiryStatus,
 } from "@/lib/store";
+import type { MediaItem, PortfolioProject } from "@/lib/portfolio";
+import MediaTab from "./media-tab";
+import ProjectsTab from "./projects-tab";
 
 const statusColor: Record<string, string> = {
   New: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
@@ -28,6 +30,7 @@ const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", id: "dashboard" },
   { icon: MessageSquare, label: "Inquiries", id: "inquiries" },
   { icon: Briefcase, label: "Projects", id: "projects" },
+  { icon: Images, label: "Media", id: "media" },
   { icon: Users, label: "Clients", id: "clients" },
   { icon: BarChart2, label: "Analytics", id: "analytics" },
   { icon: Settings, label: "Settings", id: "settings" },
@@ -39,18 +42,38 @@ export default function AdminDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("dashboard");
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
-  const [projects, setProjects] = useState<Project[]>([]);
+  const [projects, setProjects] = useState<PortfolioProject[]>([]);
+  const [media, setMedia] = useState<MediaItem[]>([]);
   const [now, setNow] = useState<Date | null>(null);
 
+  // Server-backed content (D1 + R2)
+  const refreshProjects = async () => {
+    try {
+      const res = await fetch("/api/admin/projects", { cache: "no-store" });
+      if (res.ok) setProjects((await res.json()) as PortfolioProject[]);
+    } catch { /* offline — keep last known list */ }
+  };
+  const refreshMedia = async () => {
+    try {
+      const res = await fetch("/api/admin/media", { cache: "no-store" });
+      if (res.ok) setMedia((await res.json()) as MediaItem[]);
+    } catch { /* offline — keep last known list */ }
+  };
+
   useEffect(() => {
-    // Access is enforced server-side by middleware; if we render, we're authed.
+    // Access is enforced server-side by the protected admin layout; if we
+    // render, we're authed.
     setAuthenticated(true);
 
-    // Load + live-subscribe to the store (updates when the contact form is
+    // Inquiries: live local store (updates when the contact form is
     // submitted, even from another tab).
-    const refresh = () => { setInquiries(getInquiries()); setProjects(getProjects()); };
+    const refresh = () => setInquiries(getInquiries());
     refresh();
     const unsub = subscribe(refresh);
+
+    // Projects + media live in D1/R2 behind the admin API.
+    refreshProjects();
+    refreshMedia();
 
     // live clock
     setNow(new Date());
@@ -67,16 +90,6 @@ export default function AdminDashboard() {
 
   const onDeleteInquiry = (id: string) => deleteInquiry(id);
   const onUpdateInquiryStatus = (id: string, status: InquiryStatus) => updateInquiry(id, { status });
-  const onDeleteProject = (id: string) => deleteProject(id);
-  const onCycleProjectStatus = (p: Project) =>
-    updateProject(p.id, p.status === "Ongoing" ? { status: "Completed", progress: 100 } : { status: "Ongoing", progress: 60 });
-  const onAddProject = () => {
-    const title = window.prompt("Project title?");
-    if (!title) return;
-    const client = window.prompt("Client?") || "—";
-    const value = window.prompt("Contract value? (e.g. KES 250M)") || "—";
-    addProject({ title, client, value, status: "Ongoing", progress: 10 });
-  };
 
   // Derived, real stats
   const newCount = inquiries.filter((i) => i.status === "New").length;
@@ -273,7 +286,7 @@ export default function AdminDashboard() {
                 <h3 className="font-bold text-gray-900 dark:text-white mb-4">Quick Actions</h3>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   {[
-                    { icon: Plus, label: "Add Project", color: "bg-[#0e2016] text-white", action: onAddProject },
+                    { icon: Plus, label: "Add Project", color: "bg-[#0e2016] text-white", action: () => setActiveTab("projects") },
                     { icon: MessageSquare, label: "View Inquiries", color: "bg-blue-50 dark:bg-blue-900/30 text-blue-600", action: () => setActiveTab("inquiries") },
                     { icon: Calendar, label: "Schedule Meeting", color: "bg-purple-50 dark:bg-purple-900/30 text-purple-600", action: () => { window.location.href = "mailto:sigiroconstruction2122@gmail.com?subject=Meeting%20request"; } },
                     { icon: TrendingUp, label: "View Reports", color: "bg-amber-50 dark:bg-amber-900/30 text-amber-600", action: () => setActiveTab("analytics") },
@@ -349,72 +362,25 @@ export default function AdminDashboard() {
             </div>
           )}
 
-          {/* PROJECTS */}
+          {/* PROJECTS — server-backed CRUD (D1) */}
           {activeTab === "projects" && (
-            <div className="space-y-5">
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl font-black text-gray-900 dark:text-white">Project Management</h2>
-                <button onClick={onAddProject} className="flex items-center gap-2 px-4 py-2.5 bg-[var(--gold)] hover:bg-[var(--gold-hover)] text-white text-sm font-bold rounded-full transition-colors">
-                  <Plus className="w-4 h-4" /> Add Project
-                </button>
-              </div>
-              <div className="grid gap-5">
-                {projects.map((p) => (
-                  <div key={p.id} className="bg-white dark:bg-[#11271b] rounded-2xl border border-gray-100 dark:border-[#16331f] p-6 shadow-sm">
-                    <div className="flex flex-wrap items-start justify-between gap-4">
-                      <div className="flex-1">
-                        <div className="flex flex-wrap items-center gap-3 mb-1">
-                          <h3 className="font-bold text-gray-900 dark:text-white text-base">{p.title}</h3>
-                          <span className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${statusColor[p.status]}`}>
-                            {p.status}
-                          </span>
-                        </div>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">{p.client} · {p.value}</p>
-                        <div className="mt-3">
-                          <div className="flex items-center justify-between mb-1">
-                            <span className="text-xs text-gray-500 dark:text-gray-400">Progress</span>
-                            <span className="text-xs font-bold text-[var(--gold)]">{p.progress}%</span>
-                          </div>
-                          <div className="h-2.5 bg-gray-100 dark:bg-green-900/30 rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-gradient-to-r from-[var(--gold)] to-amber-400 rounded-full"
-                              style={{ width: `${p.progress}%` }}
-                            />
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => onCycleProjectStatus(p)}
-                          title={p.status === "Ongoing" ? "Mark as completed" : "Reopen as ongoing"}
-                          className="p-2.5 text-gray-500 hover:text-[var(--gold)] hover:bg-[#f3f8f4] dark:hover:bg-slate-800/60 rounded-xl transition-colors"
-                        >
-                          <CheckCircle className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => onDeleteProject(p.id)}
-                          title="Delete project"
-                          className="p-2.5 text-gray-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-colors"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <ProjectsTab projects={projects} media={media} refresh={refreshProjects} />
+          )}
+
+          {/* MEDIA — uploads to R2 */}
+          {activeTab === "media" && (
+            <MediaTab items={media} refresh={refreshMedia} />
           )}
 
           {/* OTHER TABS */}
-          {!["dashboard", "inquiries", "projects"].includes(activeTab) && (
+          {!["dashboard", "inquiries", "projects", "media"].includes(activeTab) && (
             <div className="flex flex-col items-center justify-center py-24 text-center">
               <div className="w-20 h-20 bg-slate-100 dark:bg-[#15351f] rounded-2xl flex items-center justify-center mb-5">
                 <AlertCircle className="w-10 h-10 text-brand-green" />
               </div>
               <h3 className="text-xl font-black text-gray-900 dark:text-white mb-2 capitalize">{activeTab}</h3>
               <p className="text-gray-500 dark:text-gray-400 max-w-sm">
-                This section is coming soon. Use the navigation to access Dashboard, Inquiries, or Projects.
+                This section is coming soon. Use the navigation to access Dashboard, Inquiries, Projects, or Media.
               </p>
             </div>
           )}

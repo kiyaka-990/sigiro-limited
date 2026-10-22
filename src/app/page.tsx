@@ -8,6 +8,10 @@ import HeroCarousel from "@/components/HeroCarousel";
 import AnimatedCounter from "@/components/AnimatedCounter";
 import FAQ from "@/components/FAQ";
 import Reveal from "@/components/Reveal";
+import { listProjects } from "@/lib/server/db";
+
+// Live portfolio data — render per-request so portal edits show up instantly.
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = { title: "Home" };
 
@@ -27,12 +31,6 @@ const stats = [
   { value: 47, suffix: "", label: "Counties served" },
 ];
 
-const projects = [
-  { title: " Road Expansion Phase II", category: "Roads", image: "/images/projects/road-expansion.jpg", desc: "12km dual carriageway with modern drainage and pedestrian walkways." },
-  { title: " Water Treatment Plant", category: "Water Works", image: "/images/projects/water-treatment-plant.jpg", desc: "5,000 m³/day treatment facility serving Lavington residents." },
-  { title: " Residential Buildings", category: "Buildings", image: "/images/projects/residential-buildings.jpg", desc: "18-storey Grade A office tower with smart building systems." },
-];
-
 const testimonials = [
   { name: "James Mwangi", role: "CEO, Westlands Development Ltd", text: "Sigiro delivered our commercial complex on time and within budget. Their attention to detail is unmatched in the Kenyan market.", rating: 5 },
   { name: "Grace Wanjiku", role: "Director, Nairobi County", text: "Their reliable supplies and professional team helped us keep every site running without delays. A genuinely professional outfit.", rating: 5 },
@@ -41,7 +39,12 @@ const testimonials = [
 
 const certs = ["NCA Grade A", "EBK", "NEMA", "BORAQS", "ISO 9001:2015"];
 
-export default function HomePage() {
+export default async function HomePage() {
+  // Featured projects come from D1 (managed in the admin portal).
+  const projects = (await listProjects())
+    .slice(0, 3)
+    .map((p) => ({ title: p.title, category: p.category, image: p.image, desc: p.description }));
+
   return (
     <>
       <HeroCarousel />

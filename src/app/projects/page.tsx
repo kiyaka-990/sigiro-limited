@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { MapPin, Calendar, Tag } from "lucide-react";
+import { listProjects } from "@/lib/server/db";
+
+// Rendered per-request in the worker so portal edits appear immediately.
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Projects",
@@ -8,156 +12,20 @@ export const metadata: Metadata = {
     "Explore Sigiro Construction & General Supplies' portfolio of completed construction and consultancy projects across Kenya — roads, buildings, water works, landscaping, and more.",
 };
 
-const categories = ["All", "Roads", "Buildings", "Water Works", "Landscaping", "Environment", "Consultancy"];
+export default async function ProjectsPage() {
+  const projects = (await listProjects()).map((p) => ({
+    id: p.id,
+    title: p.title,
+    category: p.category,
+    status: p.status,
+    location: p.location,
+    year: p.year,
+    value: p.value,
+    image: p.image,
+    desc: p.description,
+    client: p.client,
+  }));
 
-const projects = [
-  {
-    id: 1,
-    title: " Road Expansion ",
-    category: "Roads",
-    status: "Completed",
-    location: "Kilifi, Kenya",
-    year: "2023",
-    value: "KES 20M",
-    image: "/images/projects/road-expansion.jpg",
-    desc: "routine maintenance and spot improvement contract, managing earthworks, vegetative clearing, and asphalt concrete placement to meet strict alignment and design specifications.",
-    client: "Kenya National Highways Authority (KeNHA)",
-  },
-  {
-    id: 2,
-    title: " Water Treatment Plant",
-    category: "Water Works",
-    status: "Completed",
-    location: "Lavington, Nairobi",
-    year: "2025",
-    value: "KES 180M",
-    image: "/images/projects/water-treatment-plant.jpg",
-    desc: "structural evaluation and rehabilitation of water treatment infrastructure, sedimentation basins, chemical dosing lines, and peripheral safety handrails",
-    client: "Nairobi City Water & Sewerage Company",
-  },
-  {
-    id: 3,
-    title: "Karen Business Park Development",
-    category: "Landscaping",
-    status: "Completed",
-    location: "Karen, Nairobi",
-    year: "2026",
-    value: "KES 15M",
-    image: "/images/projects/landscaping.jpg",
-    desc: "50-acre mixed-use development featuring premium landscaping, Japanese gardens, water features, and sustainable green spaces.",
-    client: "Karen Properties Ltd",
-  },
-  {
-    id: 4,
-    title: "Embakasi Industrial Complex",
-    category: "Buildings",
-    status: "Completed",
-    location: "Embakasi, Nairobi",
-    year: "2024",
-    value: "KES 320M",
-    image: "/images/projects/industrial-complex.jpg",
-    desc: "8-unit warehouse development with modern loading bays, office facilities, fire suppression systems, and solar power integration.",
-    client: "Embakasi Developers Ltd",
-  },
-  {
-    id: 5,
-    title: "Nairobi River Rehabilitation",
-    category: "Environment",
-    status: "Completed",
-    location: "Nairobi CBD",
-    year: "2025",
-    value: "KES 95M",
-    image: "/images/projects/nairobi-river-rehabilitation.jpg",
-    desc: "Environmental restoration of a 3km stretch of the Nairobi River including riparian planting, bank stabilization, and pollution control.",
-    client: "Nairobi Metropolitan Services (NMS)",
-  },
-  {
-    id: 6,
-    title: "Syokimau Residential Estate",
-    category: "Buildings",
-    status: "Completed",
-    location: "Syokimau, Machakos",
-    year: "2025",
-    value: "KES 550M",
-    image: "images/projects/syokimau-residential-estate.jpg",
-    desc: "120-unit gated residential estate with 3 & 4-bedroom units, clubhouse, swimming pool, and comprehensive utilities.",
-    client: "Syokimau Holdings Ltd",
-  },
-  {
-    id: 7,
-    title: "Road Drainage Upgrade",
-    category: "Roads",
-    status: "Completed",
-    location: "Landhies road, Nairobi",
-    year: "2024",
-    value: "KES 51M",
-    image: "/images/projects/road-drainage.jpg",
-    desc: "Stormwater drainage system upgrade along Landhies Road, eliminating chronic flooding and improving traffic flow.",
-    client: "Nairobi City Water & Sewerage Company (NCWSC)",
-  },
-  {
-    id: 8,
-    title: "Urban roads",
-    category: "Roads",
-    status: "Ongoing",
-    location: "Nairobi County, Kenya",
-    year: "2024",
-    value: "KES 180M",
-    image: "/images/projects/nairobi-roads.jpg",
-    desc: "Improvement of access roads to College and periodic maintenance of Kabarsiran Road",
-    client: "Kenya Ports Authority (KPA)",
-  },
-  {
-    id: 9,
-    title: "Westlands Office Tower",
-    category: "Buildings",
-    status: "Ongoing",
-    location: "Westlands, Nairobi",
-    year: "2024",
-    value: "KES 890M",
-    image: "/images/projects/Universal-Towers.jpg",
-    desc: "Grade A office tower with underground parking, smart building systems, and LEED-aligned sustainability features.",
-    client: "Westlands Development Ltd",
-  },
-  {
-    id: 10,
-    title: "Rural Water Supply",
-    category: "Water Works",
-    status: "Completed",
-    location: "Kakamega County",
-    year: "2022",
-    value: "KES 140M",
-    image: "/images/projects/water-supply.jpg",
-    desc: "Rural water supply scheme serving 15,000 households across 8 sub-locations with boreholes, pipelines, and community kiosks.",
-    client: "Kilyan Group Ltd",
-  },
-  {
-    id: 11,
-    title: "Landscaping & Grounds",
-    category: "Landscaping",
-    status: "Completed",
-    location: "Runda",
-    year: "2021",
-    value: "KES 55M",
-    image: "/images/projects/landscaping-2.jpg",
-    desc: "Comprehensive landscaping  approaches, parking areas, and airside green spaces covering 30+ acres.",
-    client: "Private Aviation Services Ltd",
-  },
-  {
-    id: 12,
-    title: "Construction of Single Residential House",
-    category: "Building",
-    status: "Completed",
-    location: "Nairobi County",
-    year: "2020",
-    value: "KES 22M",
-    image: "/images/projects/patel.jpg",
-    desc: "Construction of fully furnished complete with landscaping services of a Single Residential House.",
-    client: "Umang Patel",
-  },
-];
-
-export default function ProjectsPage() {
   return (
     <>
       {/* Hero */}
@@ -247,6 +115,11 @@ export default function ProjectsPage() {
               </article>
             ))}
           </div>
+          {projects.length === 0 && (
+            <p className="text-center text-gray-400 dark:text-gray-500 py-16">
+              Projects are on their way — check back soon.
+            </p>
+          )}
         </div>
       </section>
 
