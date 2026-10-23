@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/server/auth";
-import { getFiles, insertMedia, listMedia } from "@/lib/server/db";
+import { getFiles, hasStorage, insertMedia, listMedia } from "@/lib/server/db";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -32,6 +32,12 @@ export async function POST(req: Request) {
   if (!(await requireAdmin())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  if (!hasStorage()) {
+    return NextResponse.json(
+      { error: "Storage is not available on this deployment — manage content on the Cloudflare-hosted site." },
+      { status: 503 }
+    );
+  }
 
   let form: FormData;
   try {
@@ -59,7 +65,11 @@ export async function POST(req: Request) {
   const key = `${crypto.randomUUID().replace(/-/g, "")}${ext}`;
   const contentType = file.type || "application/octet-stream";
 
-  await getFiles().put(key, (file as any).stream(), {
+  const files = getFiles();
+  if (!files) {
+    return NextResponse.json({ error: "Storage is not available on this deployment." }, { status: 503 });
+  }
+  await files.put(key, (file as any).stream(), {
     httpMetadata: { contentType },
   });
 

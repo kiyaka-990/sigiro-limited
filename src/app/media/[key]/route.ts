@@ -32,6 +32,10 @@ export async function GET(req: Request, ctx: { params: Promise<{ key: string }> 
   const safeKey = decodeURIComponent(key);
 
   const files = getFiles();
+  if (!files) {
+    // No R2 in this deployment (e.g. Vercel) — nothing to serve here.
+    return new Response("Not found", { status: 404 });
+  }
   const obj = await files.get(safeKey);
   if (!obj) {
     return new Response("Not found", { status: 404 });

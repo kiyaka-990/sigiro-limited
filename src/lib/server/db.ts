@@ -29,9 +29,35 @@ interface R2Like {
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
-function bindings(): { DB: D1Like; FILES: R2Like } {
-  const ctx = getCloudflareContext() as unknown as { env: { DB: D1Like; FILES: R2Like } };
-  return ctx.env;
+/**
+ * Resolve the D1/R2 bindings from the Cloudflare runtime context.
+ * Returns null outside Cloudflare (e.g. Vercel, plain `next start`), where the
+ * context is absent — callers fall back to read-only seed data instead of crashing.
+ */
+function bindings(): { DB: D1Like; FILES: R2Like } | null {
+  try {
+    const ctx = getCloudflareContext() as unknown as
+      | { env?: { DB?: D1Like; FILES?: R2Like } }
+      | undefined;
+    const env = ctx?.env;
+    if (env?.DB && env?.FILES) return { DB: env.DB, FILES: env.FILES };
+  } catch {
+    // getCloudflareContext() throws when no Cloudflare runtime is present.
+  }
+  return null;
+}
+
+/** True when D1/R2 storage is available in this deployment (Cloudflare). */
+export function hasStorage(): boolean {
+  return bindings() !== null;
+}
+
+/** Thrown by write helpers when storage is unavailable (deployments without D1/R2). */
+export class StorageUnavailableError extends Error {
+  constructor() {
+    super("Content storage (D1/R2) is not available in this deployment");
+    this.name = "StorageUnavailableError";
+  }
 }
 
 const MIGRATIONS = [
@@ -78,9 +104,11 @@ async function migrate(db: D1Like): Promise<void> {
   }
 }
 
-/** DB handle with schema guaranteed (lazy per-isolate migration; retried on failure). */
-export async function getDb(): Promise<D1Like> {
-  const { DB } = bindings();
+/** DB handle with schema guaranteed, or null when storage is unavailable. */
+export async function getDb(): Promise<D1Like | null> {
+  const b = bindings();
+  if (!b) return null;
+  const { DB } = b;
   if (!migrated) {
     migrated = migrate(DB).catch((err) => {
       migrated = null;
@@ -91,8 +119,9 @@ export async function getDb(): Promise<D1Like> {
   return DB;
 }
 
-export function getFiles(): R2Like {
-  return bindings().FILES;
+/** R2 handle, or null when storage is unavailable. */
+export function getFiles(): R2Like | null {
+  return bindings()?.FILES ?? null;
 }
 
 /* ---------------- Projects ---------------- */
@@ -117,12 +146,17 @@ function toProject(row: ProjectRow): PortfolioProject {
 
 export async function listProjects(): Promise<PortfolioProject[]> {
   const db = await getDb();
+  if (!db) {
+    // No storage in this deployment (e.g. Vercel): serve the original portfolio.
+    return SEED_PROJECTS.map((p, i) => ({ id: i + 1, ...p }));
+  }
   const { results } = await db.prepare(`SELECT * FROM projects ORDER BY id ASC`).all<ProjectRow>();
   return results.map(toProject);
 }
 
 export async function createProject(p: NewProject): Promise<PortfolioProject> {
   const db = await getDb();
+  if (!db) throw new StorageUnavailableError();
   const row = await db
     .prepare(
       `INSERT INTO projects (title, category, status, location, year, value, image, description, client, progress)
@@ -135,6 +169,7 @@ export async function createProject(p: NewProject): Promise<PortfolioProject> {
 
 export async function updateProject(id: number, p: NewProject): Promise<PortfolioProject | null> {
   const db = await getDb();
+  if (!db) throw new StorageUnavailableError();
   const row = await db
     .prepare(
       `UPDATE projects SET title=?, category=?, status=?, location=?, year=?, value=?, image=?, description=?, client=?, progress=?
@@ -147,6 +182,7 @@ export async function updateProject(id: number, p: NewProject): Promise<Portfoli
 
 export async function deleteProject(id: number): Promise<boolean> {
   const db = await getDb();
+  if (!db) throw new StorageUnavailableError();
   const res = (await db.prepare(`DELETE FROM projects WHERE id=?`).bind(id).run()) as { meta?: { changes?: number } };
   return (res?.meta?.changes ?? 0) > 0;
 }
@@ -166,12 +202,14 @@ function toMedia(row: ProjectRow): MediaItem {
 
 export async function listMedia(): Promise<MediaItem[]> {
   const db = await getDb();
+  if (!db) return []; // gallery empty state outside Cloudflare
   const { results } = await db.prepare(`SELECT * FROM media ORDER BY created_at DESC`).all<ProjectRow>();
   return results.map(toMedia);
 }
 
 export async function insertMedia(item: MediaItem): Promise<void> {
   const db = await getDb();
+  if (!db) throw new StorageUnavailableError();
   await db
     .prepare(`INSERT INTO media (id, kind, name, type, size, created_at) VALUES (?, ?, ?, ?, ?, ?)`)
     .bind(item.id, item.kind, item.name, item.type, item.size, item.created_at)
@@ -180,5 +218,6 @@ export async function insertMedia(item: MediaItem): Promise<void> {
 
 export async function deleteMedia(id: string): Promise<void> {
   const db = await getDb();
+  if (!db) throw new StorageUnavailableError();
   await db.prepare(`DELETE FROM media WHERE id=?`).bind(id).run();
 }

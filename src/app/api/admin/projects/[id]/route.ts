@@ -1,11 +1,14 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/server/auth";
-import { deleteProject, updateProject } from "@/lib/server/db";
+import { deleteProject, hasStorage, updateProject } from "@/lib/server/db";
 import { parseProject } from "@/lib/server/project-input";
 
 export async function PUT(req: Request, ctx: { params: Promise<{ id: string }> }) {
   if (!(await requireAdmin())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  if (!hasStorage()) {
+    return NextResponse.json({ error: "Storage is not available on this deployment." }, { status: 503 });
   }
   const { id } = await ctx.params;
   const numericId = Number(id);
@@ -34,6 +37,9 @@ export async function PUT(req: Request, ctx: { params: Promise<{ id: string }> }
 export async function DELETE(_req: Request, ctx: { params: Promise<{ id: string }> }) {
   if (!(await requireAdmin())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  if (!hasStorage()) {
+    return NextResponse.json({ error: "Storage is not available on this deployment." }, { status: 503 });
   }
   const { id } = await ctx.params;
   const numericId = Number(id);

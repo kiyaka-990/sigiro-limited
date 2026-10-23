@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/server/auth";
-import { createProject, listProjects } from "@/lib/server/db";
+import { createProject, hasStorage, listProjects } from "@/lib/server/db";
 import { parseProject } from "@/lib/server/project-input";
 
 export async function GET() {
@@ -16,6 +16,12 @@ export async function GET() {
 export async function POST(req: Request) {
   if (!(await requireAdmin())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  if (!hasStorage()) {
+    return NextResponse.json(
+      { error: "Storage is not available on this deployment — manage content on the Cloudflare-hosted site." },
+      { status: 503 }
+    );
   }
   let body: unknown;
   try {
