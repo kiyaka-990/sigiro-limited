@@ -14,7 +14,10 @@ export async function POST(req: Request) {
 
   if (!USER || !PASS || !SECRET) {
     return NextResponse.json(
-      { error: "Admin auth is not configured on the server." },
+      {
+        error:
+          "Admin login is only configured on the Cloudflare-hosted site. Use https://site-b6df6ecd32fc4c629e3131038b44c453.freebuff.page/admin/login — this deployment serves the public site only.",
+      },
       { status: 500 }
     );
   }
